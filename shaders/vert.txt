@@ -1,0 +1,50 @@
+#version 330                                                              
+
+layout (location = 0) in vec3 pos;											
+layout (location = 1) in vec2 tex;    
+layout (location = 2) in vec3 norm;  
+                                                                     
+out vec4 vCol; 
+out vec2 TexCoord; 
+out vec3 Normal;  
+out vec3 FragPos;                                                        
+                                                                          
+                                                                 
+uniform mat4 model;                                                       
+uniform mat4 projection; 
+uniform mat4 view;   
+
+uniform int randomize;
+uniform float time;
+
+
+
+void main()                                                               
+{                  
+    vCol=vec4(clamp(pos,0.0f,1.0f),1.0f);   
+    TexCoord=tex; 
+	Normal= mat3(transpose(inverse(model))) * norm;
+	FragPos= ( model * vec4(pos, 1.0)).xyz;
+
+
+	vec4 initialPos = projection * view * model * vec4(pos, 1.0);
+	
+	if(randomize == 0)
+		gl_Position = initialPos;
+
+	else if(randomize == 1)
+		// frick the duck 1
+		gl_Position = initialPos + vec4(sin(cos(time) * initialPos.x + sin(time) * initialPos.y + sin(cos(time)) * initialPos.z));
+	
+	else if(randomize == 2)
+		// frick the duck 2
+		gl_Position = initialPos * vec4(1,1 + 0.9f * sin(time),1,1) * vec4( 1 + 0.2f * cos(time)) + vec4(norm,1) * 0.1f * sin((2 + cos(time)) * time) + vec4(0,1 + 0.9f * sin(time),0,0);
+
+    else if(randomize == 3)
+		// OH BOY
+		gl_Position = initialPos * vec4(1,1 + 0.9f * sin(time),1,1) * vec4( 1 + 0.2f * cos(time)) + vec4(norm,1) * 0.1f * sin((2 + cos(time)) * time) + vec4(0,1 + 0.9f * sin(time),0,0) + 0.01f * time * vec4(norm,1) + vec4(sin(cos(time) * initialPos.x + sin(time) * initialPos.y + sin(cos(time)) * initialPos.z));;
+	
+
+
+                            
+}
